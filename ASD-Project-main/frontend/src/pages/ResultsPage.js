@@ -399,13 +399,6 @@ const ResultsPage = () => {
               New Assessment
             </Button>
             <Button
-              onClick={() => navigate('/history')}
-              data-testid="view-history-button"
-              className="bg-secondary hover:bg-secondary/80 text-primary rounded-full px-8 py-3 font-semibold"
-            >
-              View History
-            </Button>
-            <Button
               onClick={() => navigate('/analysis')}
               variant="outline"
               className="rounded-full px-8 py-3 font-semibold flex items-center gap-2"

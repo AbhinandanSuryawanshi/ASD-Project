@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Brain, ClipboardCheck, Activity, History, BarChart3 } from "lucide-react";
+import { Brain, ClipboardCheck, Activity, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
@@ -45,15 +45,6 @@ const LandingPage = () => {
           >
             <BarChart3 className="w-5 h-5" />
             <span className="hidden md:inline">Model Analysis</span>
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/history')}
-            data-testid="history-nav-button"
-            className="flex items-center gap-2"
-          >
-            <History className="w-5 h-5" />
-            <span className="hidden md:inline">History</span>
           </Button>
         </div>
         </div>

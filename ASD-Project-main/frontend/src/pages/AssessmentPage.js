@@ -179,7 +179,7 @@ const AssessmentPage = () => {
           ))}
         </div>
 
-        <Card className="bg-white rounded-2xl border border-stone-100 p-8 md:p-12 shadow-card">
+        <Card className="bg-white rounded-2xl border border-stone-100 p-8 md:p-12 shadow-card overflow-visible">
           <AnimatePresence mode="wait">
             {step === 1 && (
               <motion.div
@@ -190,8 +190,8 @@ const AssessmentPage = () => {
                 transition={{ duration: 0.3 }}
               >
                 <h2 className="text-3xl font-bold text-text-primary mb-8">Demographic Information</h2>
-                <div className="space-y-6">
-                  <div>
+                <div className="space-y-8 overflow-visible">
+                  <div className="min-h-[4rem]">
                     <Label htmlFor="name" className="text-base font-medium">Full Name *</Label>
                     <Input
                       id="name"
@@ -203,7 +203,7 @@ const AssessmentPage = () => {
                       placeholder="Enter your full name"
                     />
                   </div>
-                  <div>
+                  <div className="min-h-[4rem]">
                     <Label htmlFor="age" className="text-base font-medium">Age</Label>
                     <Input
                       id="age"
@@ -215,19 +215,19 @@ const AssessmentPage = () => {
                       placeholder="Enter age"
                     />
                   </div>
-                  <div>
+                  <div className="relative z-0 min-h-[4rem]">
                     <Label htmlFor="gender" className="text-base font-medium">Gender</Label>
                     <Select value={formData.gender} onValueChange={(value) => handleChange('gender', value)}>
                       <SelectTrigger data-testid="gender-select" className="h-14 rounded-xl border-stone-200 bg-stone-50 px-4 text-lg mt-2">
                         <SelectValue placeholder="Select gender" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent sideOffset={6} position="popper">
                         <SelectItem value="0">Male</SelectItem>
                         <SelectItem value="1">Female</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div>
+                  <div className="relative z-0 min-h-[4rem]">
                     <Label htmlFor="ethnicity" className="text-base font-medium">Ethnicity</Label>
                     <Input
                       id="ethnicity"
@@ -239,7 +239,7 @@ const AssessmentPage = () => {
                       placeholder="Ethnicity code (0-10)"
                     />
                   </div>
-                  <div>
+                  <div className="min-h-[4rem]">
                     <Label htmlFor="country" className="text-base font-medium">Country of Residence</Label>
                     <Input
                       id="country"
@@ -250,9 +250,9 @@ const AssessmentPage = () => {
                       placeholder="Enter country"
                     />
                   </div>
-                  <div>
+                  <div className="min-h-[4rem]">
                     <Label className="text-base font-medium mb-3 block">Was born with jaundice?</Label>
-                    <RadioGroup value={formData.jaundice} onValueChange={(value) => handleChange('jaundice', value)}>
+                    <RadioGroup value={formData.jaundice} onValueChange={(value) => handleChange('jaundice', value)} className="flex flex-row items-center gap-6 mt-2">
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="1" id="jaundice-yes" data-testid="jaundice-yes" />
                         <Label htmlFor="jaundice-yes" className="cursor-pointer">Yes</Label>
@@ -263,9 +263,9 @@ const AssessmentPage = () => {
                       </div>
                     </RadioGroup>
                   </div>
-                  <div>
+                  <div className="min-h-[4rem]">
                     <Label className="text-base font-medium mb-3 block">Family history of autism?</Label>
-                    <RadioGroup value={formData.family_history} onValueChange={(value) => handleChange('family_history', value)}>
+                    <RadioGroup value={formData.family_history} onValueChange={(value) => handleChange('family_history', value)} className="flex flex-row items-center gap-6 mt-2">
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="1" id="family-yes" data-testid="family-history-yes" />
                         <Label htmlFor="family-yes" className="cursor-pointer">Yes</Label>
@@ -276,13 +276,13 @@ const AssessmentPage = () => {
                       </div>
                     </RadioGroup>
                   </div>
-                  <div>
+                  <div className="relative z-0 min-h-[4rem]">
                     <Label htmlFor="respondent" className="text-base font-medium">Respondent</Label>
                     <Select value={formData.respondent} onValueChange={(value) => handleChange('respondent', value)}>
                       <SelectTrigger data-testid="respondent-select" className="h-14 rounded-xl border-stone-200 bg-stone-50 px-4 text-lg mt-2">
                         <SelectValue placeholder="Select relationship" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent sideOffset={6} position="popper">
                         <SelectItem value="Self">Self</SelectItem>
                         <SelectItem value="Parent">Parent</SelectItem>
                         <SelectItem value="Health Professional">Health Professional</SelectItem>
