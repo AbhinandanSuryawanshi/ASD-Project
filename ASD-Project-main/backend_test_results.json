@@ -1,0 +1,88 @@
+{
+  "timestamp": "2026-01-24T05:14:00.088329",
+  "base_url": "https://spectrum-screen.preview.emergentagent.com",
+  "summary": {
+    "total_tests": 11,
+    "passed_tests": 10,
+    "success_rate": 90.9090909090909
+  },
+  "test_details": [
+    {
+      "test": "API Root Endpoint",
+      "status": "PASSED",
+      "details": "Response: {'message': 'ASD Detection System API'}",
+      "expected_status": 200,
+      "actual_status": 200
+    },
+    {
+      "test": "Image Upload",
+      "status": "PASSED",
+      "details": "Uploaded filename: acc467a3-c6c6-41d0-8464-49069b533fda.jpg",
+      "expected_status": 200,
+      "actual_status": 200
+    },
+    {
+      "test": "Assessment Creation",
+      "status": "PASSED",
+      "details": "Assessment created with ID: d33a8a50-9a00-4f4b-9c22-91b576d01e59, Risk: Moderate, Probability: 0.320",
+      "expected_status": 200,
+      "actual_status": 200
+    },
+    {
+      "test": "Get All Assessments",
+      "status": "PASSED",
+      "details": "Retrieved 11 assessments",
+      "expected_status": 200,
+      "actual_status": 200
+    },
+    {
+      "test": "Get Specific Assessment",
+      "status": "PASSED",
+      "details": "Retrieved assessment d33a8a50-9a00-4f4b-9c22-91b576d01e59 successfully",
+      "expected_status": 200,
+      "actual_status": 200
+    },
+    {
+      "test": "Non-existent Assessment (404)",
+      "status": "PASSED",
+      "details": "Correctly returned 404 for non-existent assessment",
+      "expected_status": 404,
+      "actual_status": 404
+    },
+    {
+      "test": "PDF Report Generation",
+      "status": "PASSED",
+      "details": "PDF generated successfully, size: 7678 bytes",
+      "expected_status": 200,
+      "actual_status": 200
+    },
+    {
+      "test": "PDF Report Non-existent (404)",
+      "status": "FAILED",
+      "details": "Expected 404, got 520",
+      "expected_status": 404,
+      "actual_status": 520
+    },
+    {
+      "test": "Assessment Without Image",
+      "status": "PASSED",
+      "details": "Assessment without image created successfully, ID: 9530673b-901f-4c4d-97ff-b189c78d91e4, Risk: Low",
+      "expected_status": 200,
+      "actual_status": 200
+    },
+    {
+      "test": "Risk Level - High Risk Scenario",
+      "status": "PASSED",
+      "details": "High Risk Scenario: Got High risk level",
+      "expected_status": 200,
+      "actual_status": 200
+    },
+    {
+      "test": "Risk Level - Low Risk Scenario",
+      "status": "PASSED",
+      "details": "Low Risk Scenario: Got Low risk level",
+      "expected_status": 200,
+      "actual_status": 200
+    }
+  ]
+}

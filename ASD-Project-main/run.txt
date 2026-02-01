@@ -1,0 +1,17 @@
+   cd "f:\ASD-Project-main\ASD-Project-main\frontend"
+   npm start   
+
+
+   cd "f:\ASD-Project-main\ASD-Project-main\backend"
+   .\.venv\Scripts\Activate.ps1
+   python server.py   
+
+
+
+   cd "F:\ASD-Project-main\ASD-Project-main\backend"; .\.venv\Scripts\python.exe -m uvicorn server:app --host 0.0.0.0 --port 8000 --reload
+
+
+
+   npm start
+
+    cd "ASD-Project-main\frontend"  then use npm start

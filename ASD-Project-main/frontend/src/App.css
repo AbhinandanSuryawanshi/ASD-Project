@@ -1,0 +1,44 @@
+.App {
+  min-height: 100vh;
+  background: #FAFAF9;
+}
+
+.App-header {
+  padding: 2rem;
+}
+
+.App-link {
+  color: #0F5A5C;
+}
+
+.gradient-hero {
+  background: linear-gradient(135deg, #E6F2F2 0%, #FAFAF9 50%, #FFFFFF 100%);
+}
+
+.card-gradient {
+  background: linear-gradient(180deg, #FFFFFF 0%, #FAFAF9 100%);
+}
+
+.stepper-dot {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stepper-dot.active {
+  width: 2rem;
+}
+
+button:hover {
+  transform: scale(1.02);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #0F5A5C;
+  box-shadow: 0 0 0 3px rgba(15, 90, 92, 0.1);
+}

@@ -1,0 +1,91 @@
+{
+  "model_type": "image",
+  "algorithm": "RandomForestClassifier",
+  "train_metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "confusion_matrix": [
+      [
+        47,
+        0
+      ],
+      [
+        0,
+        33
+      ]
+    ]
+  },
+  "test_metrics": {
+    "accuracy": 0.45,
+    "precision": 0.5199999999999999,
+    "recall": 0.45,
+    "f1_score": 0.42046035805626597,
+    "confusion_matrix": [
+      [
+        6,
+        2
+      ],
+      [
+        9,
+        3
+      ]
+    ],
+    "roc_auc": 0.3854166666666667,
+    "roc_curve": {
+      "fpr": [
+        0.0,
+        0.0,
+        0.0,
+        0.125,
+        0.375,
+        0.5,
+        0.5,
+        0.75,
+        0.75,
+        0.875,
+        0.875,
+        0.875,
+        1.0,
+        1.0
+      ],
+      "tpr": [
+        0.0,
+        0.08333333333333333,
+        0.16666666666666666,
+        0.16666666666666666,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.4166666666666667,
+        0.4166666666666667,
+        0.5,
+        0.5,
+        0.5833333333333334,
+        0.75,
+        0.75,
+        1.0
+      ],
+      "thresholds": [
+        Infinity,
+        0.69,
+        0.56,
+        0.53,
+        0.5,
+        0.48,
+        0.46,
+        0.43,
+        0.42,
+        0.4,
+        0.36,
+        0.35,
+        0.32,
+        0.23
+      ]
+    }
+  },
+  "training_samples": 80,
+  "test_samples": 20,
+  "total_samples": 100,
+  "note": "This is a placeholder model. Train with actual labeled image data for production use."
+}
