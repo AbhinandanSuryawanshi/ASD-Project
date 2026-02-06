@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: asd-detection-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.server:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10
+      - key: MONGO_URL
+        value: mongodb://localhost:27017
+        scope: build
+      - key: DB_NAME
+        value: asd_db
+        scope: build
