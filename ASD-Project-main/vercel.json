@@ -1,18 +1,18 @@
 {
-  "buildCommand": "npm run build",
-  "devCommand": "npm start",
-  "installCommand": "npm install --legacy-peer-deps",
-  "framework": "create-react-app",
-  "env": [
+  "projectSettings": {
+    "framework": "create-react-app",
+    "outputDirectory": "frontend/build"
+  },
+  "buildCommand": "cd frontend && npm run build",
+  "installCommand": "cd frontend && npm install --legacy-peer-deps",
+  "devCommand": "cd frontend && npm start",
+  "routes": [
     {
-      "key": "REACT_APP_BACKEND_URL",
-      "value": "http://localhost:8000",
-      "type": "plaintext"
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
-  ],
-  "git": {
-    "deploymentEnabled": {
-      "main": true
-    }
-  }
+  ]
 }
