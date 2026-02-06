@@ -12,7 +12,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import CameraCapture from "@/components/CameraCapture";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+// Prefer explicit env, otherwise match current host (for LAN / IP access)
+const BACKEND_URL =
+  process.env.REACT_APP_BACKEND_URL ||
+  `http://${window.location.hostname}:8000`;
 const API = `${BACKEND_URL}/api`;
 
 const AssessmentPage = () => {
@@ -28,7 +31,6 @@ const AssessmentPage = () => {
     name: "",
     age: "",
     gender: "",
-    ethnicity: "",
     country: "",
     jaundice: "",
     family_history: "",
@@ -70,12 +72,19 @@ const AssessmentPage = () => {
     formDataUpload.append('file', file);
 
     try {
-      const response = await axios.post(`${API}/upload-image`, formDataUpload);
+      console.log('Uploading image:', file.name, 'Size:', file.size, 'Type:', file.type);
+      const response = await axios.post(`${API}/upload-image`, formDataUpload, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log('Image upload response:', response.data);
       setUploadedFilename(response.data.filename);
       toast.success("Image uploaded successfully");
       setShowCamera(false);
     } catch (error) {
-      toast.error("Failed to upload image");
+      console.error('Image upload error:', error.response?.data || error.message);
+      toast.error(error.response?.data?.detail || "Failed to upload image");
     }
   };
 
@@ -92,7 +101,7 @@ const AssessmentPage = () => {
 
   const validateStep = () => {
     if (step === 1) {
-      const required = ['name', 'age', 'gender', 'ethnicity', 'country', 'jaundice', 'family_history', 'respondent'];
+      const required = ['name', 'age', 'gender', 'country', 'jaundice', 'family_history', 'respondent'];
       return required.every(field => formData[field] !== "");
     }
     if (step === 2) {
@@ -126,7 +135,6 @@ const AssessmentPage = () => {
           name: formData.name,
           age: parseInt(formData.age),
           gender: parseInt(formData.gender),
-          ethnicity: parseInt(formData.ethnicity),
           country: formData.country,
           jaundice: parseInt(formData.jaundice),
           family_history: parseInt(formData.family_history),
@@ -147,12 +155,15 @@ const AssessmentPage = () => {
         image_filename: uploadedFilename
       };
 
+      console.log('Submitting assessment payload:', payload);
       const response = await axios.post(`${API}/assess`, payload);
+      console.log('Assessment response:', response.data);
       toast.success("Assessment completed successfully");
       navigate(`/results/${response.data.id}`);
     } catch (error) {
-      toast.error("Failed to submit assessment");
-      console.error(error);
+      console.error('Assessment submission error:', error.response?.data || error.message);
+      const errorDetail = error.response?.data?.detail || "Failed to submit assessment";
+      toast.error(errorDetail);
     } finally {
       setLoading(false);
     }
@@ -221,24 +232,13 @@ const AssessmentPage = () => {
                       <SelectTrigger data-testid="gender-select" className="h-14 rounded-xl border-stone-200 bg-stone-50 px-4 text-lg mt-2">
                         <SelectValue placeholder="Select gender" />
                       </SelectTrigger>
-                      <SelectContent sideOffset={6} position="popper">
+                      <SelectContent className="w-[var(--radix-select-trigger-width)] max-w-xs rounded-xl shadow-card" sideOffset={12} position="popper" side="bottom" align="center" alignOffset={-190} avoidCollisions={true}>
                         <SelectItem value="0">Male</SelectItem>
                         <SelectItem value="1">Female</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="relative z-0 min-h-[4rem]">
-                    <Label htmlFor="ethnicity" className="text-base font-medium">Ethnicity</Label>
-                    <Input
-                      id="ethnicity"
-                      data-testid="ethnicity-input"
-                      type="number"
-                      value={formData.ethnicity}
-                      onChange={(e) => handleChange('ethnicity', e.target.value)}
-                      className="h-14 rounded-xl border-stone-200 bg-stone-50 px-4 text-lg mt-2"
-                      placeholder="Ethnicity code (0-10)"
-                    />
-                  </div>
+
                   <div className="min-h-[4rem]">
                     <Label htmlFor="country" className="text-base font-medium">Country of Residence</Label>
                     <Input
@@ -282,7 +282,7 @@ const AssessmentPage = () => {
                       <SelectTrigger data-testid="respondent-select" className="h-14 rounded-xl border-stone-200 bg-stone-50 px-4 text-lg mt-2">
                         <SelectValue placeholder="Select relationship" />
                       </SelectTrigger>
-                      <SelectContent sideOffset={6} position="popper">
+                      <SelectContent className="w-[var(--radix-select-trigger-width)] max-w-xs rounded-xl shadow-card" sideOffset={12} position="popper" side="bottom" align="center" alignOffset={-190} avoidCollisions={true}>
                         <SelectItem value="Self">Self</SelectItem>
                         <SelectItem value="Parent">Parent</SelectItem>
                         <SelectItem value="Health Professional">Health Professional</SelectItem>

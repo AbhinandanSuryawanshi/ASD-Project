@@ -139,11 +139,11 @@ class DemographicData(BaseModel):
     name: str
     age: int
     gender: int
-    ethnicity: int
     country: str
     jaundice: int
     family_history: int
     respondent: str
+    ethnicity: Optional[int] = None
 
 class BehavioralData(BaseModel):
     a1_score: int
@@ -188,21 +188,36 @@ async def get_model_metrics_test():
 async def upload_image(file: UploadFile = File(...)):
     """Upload an image for the assessment"""
     try:
-        file_extension = Path(file.filename).suffix
+        if not file or not file.filename:
+            raise HTTPException(status_code=400, detail="No file provided")
+        
+        file_extension = Path(file.filename).suffix.lower()
+        if not file_extension:
+            file_extension = ".jpg"
+        
         unique_filename = f"{uuid.uuid4()}{file_extension}"
         file_path = UPLOADS_DIR / unique_filename
         
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+        logger.info(f"Uploading image: {file.filename} -> {unique_filename}")
         
+        with open(file_path, "wb") as buffer:
+            content = await file.read()
+            buffer.write(content)
+        
+        logger.info(f"✅ Image uploaded successfully: {unique_filename}")
         return {"filename": unique_filename, "status": "success"}
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"❌ Error uploading image: {type(e).__name__}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to upload image: {str(e)}")
 
 @api_router.post("/assess", response_model=AssessmentResult)
 async def create_assessment(request: AssessmentRequest):
     """Create a new assessment and predict ASD risk"""
     try:
+        logger.info(f"Processing assessment request with demographic: {request.demographic}")
+        
         # Prepare features for prediction
         features = {
             'a1_score': request.behavioral.a1_score,
@@ -217,13 +232,16 @@ async def create_assessment(request: AssessmentRequest):
             'a10_score': request.behavioral.a10_score,
             'age': request.demographic.age,
             'gender': request.demographic.gender,
-            'ethnicity': request.demographic.ethnicity,
+            'ethnicity': request.demographic.ethnicity if request.demographic.ethnicity is not None else 0,
             'jaundice': request.demographic.jaundice,
             'austim': request.demographic.family_history
         }
         
+        logger.info(f"Prediction features: {features}")
+        
         # Get prediction
         prediction_result = predict_asd(features)
+        logger.info(f"Prediction result: {prediction_result}")
         
         # Determine risk level
         probability = prediction_result['probability']
@@ -244,6 +262,8 @@ async def create_assessment(request: AssessmentRequest):
             confidence=prediction_result['confidence'],
             risk_level=risk_level
         )
+        
+        logger.info(f"Assessment created with ID: {result.id}")
         
         # Cache the assessment in memory
         assessment_cache[result.id] = result.model_dump()
@@ -266,9 +286,12 @@ async def create_assessment(request: AssessmentRequest):
         logger.info(f"✅ Assessment cached in memory: {result.id}")
         
         return result
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Error in assessment: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"❌ Error in assessment creation: {type(e).__name__}: {e}", exc_info=True)
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Error creating assessment: {str(e)}")
 
 MODELS_DIR = ROOT_DIR / 'models'
 QUESTIONNAIRE_METRICS_PATH = MODELS_DIR / 'questionnaire_metrics.json'
@@ -394,9 +417,9 @@ async def get_assessment(assessment_id: str):
 @api_router.get("/assessments/{assessment_id}/report")
 async def download_report(assessment_id: str):
     """Generate and download PDF report for an assessment"""
+    assessment = None
+    
     try:
-        assessment = None
-        
         # Check cache first (fast retrieval)
         if assessment_id in assessment_cache:
             assessment = assessment_cache[assessment_id]
@@ -412,7 +435,7 @@ async def download_report(assessment_id: str):
                 except Exception as db_error:
                     logger.warning(f"Could not retrieve from database: {db_error}")
         
-        # If not found in cache or database, return error
+        # If not found in cache or database, return 404 immediately
         if assessment is None:
             logger.warning(f"Assessment not found: {assessment_id}")
             raise HTTPException(status_code=404, detail=f"Assessment {assessment_id} not found")
@@ -449,25 +472,32 @@ async def download_report(assessment_id: str):
         logger.info(f"Generating PDF report for assessment: {assessment_id}")
         
         # Generate PDF report
-        report_path = generate_pdf_report(assessment_id, assessment_for_pdf)
-        
-        if not Path(report_path).exists():
-            logger.error(f"PDF file was not created: {report_path}")
-            raise HTTPException(status_code=500, detail="Failed to generate PDF report")
-        
-        logger.info(f"✅ PDF report generated successfully: {report_path}")
-        
-        # Return file
-        return FileResponse(
-            report_path,
-            media_type="application/pdf",
-            filename=f"ASD_Assessment_Report_{assessment_id}.pdf"
-        )
+        try:
+            report_path = generate_pdf_report(assessment_id, assessment_for_pdf)
+            
+            if not Path(report_path).exists():
+                logger.error(f"PDF file was not created: {report_path}")
+                raise HTTPException(status_code=500, detail="Failed to generate PDF report")
+            
+            logger.info(f"✅ PDF report generated successfully: {report_path}")
+            
+            # Return file
+            return FileResponse(
+                report_path,
+                media_type="application/pdf",
+                filename=f"ASD_Assessment_Report_{assessment_id}.pdf"
+            )
+        except HTTPException:
+            raise
+        except Exception as gen_error:
+            logger.error(f"❌ Error in PDF generation: {type(gen_error).__name__}: {gen_error}", exc_info=True)
+            raise HTTPException(status_code=500, detail=f"Error generating report: {str(gen_error)}")
+    
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"❌ Error generating report: {type(e).__name__}: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Error generating report: {str(e)}")
+        logger.error(f"❌ Unexpected error in report endpoint: {type(e).__name__}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 app.include_router(api_router)
 

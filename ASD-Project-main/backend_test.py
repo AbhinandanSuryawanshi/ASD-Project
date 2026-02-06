@@ -425,7 +425,8 @@ def main():
     }
     
     # Save to file
-    results_file = Path("/app/backend_test_results.json")
+    results_file = Path(__file__).parent / "backend_test_results.json"
+    results_file.parent.mkdir(exist_ok=True, parents=True)
     with open(results_file, "w") as f:
         json.dump(results, f, indent=2)
     
